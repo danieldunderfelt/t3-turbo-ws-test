@@ -9,8 +9,8 @@ node_modules
 coverage
 
 # database
-**/prisma/db.sqlite
-**/prisma/db.sqlite-journal
+**/prisma/dev.db
+**/prisma/dev.db-journal
 
 # next.js
 .next/

@@ -1,8 +1,27 @@
 import { z } from "zod";
+import { Worker } from "bullmq";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const postRouter = createTRPCRouter({
+  onPost: publicProcedure.subscription(() => {
+    return observable<Post>((emit) => {
+      const messageWorker = new Worker(
+        'test',
+        async (job) => {
+          if (typeof job.data === 'string') {
+            // TODO: Action on message received
+            emit.next((job as Job<Post>).data)
+          }
+
+        },
+      )
+
+      return () => {
+        void messageWorker.close()
+      }
+    })
+  }),
   all: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.post.findMany({ orderBy: { id: "desc" } });
   }),
